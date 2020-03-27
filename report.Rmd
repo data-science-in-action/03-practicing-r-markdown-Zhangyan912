@@ -1,0 +1,159 @@
+---
+title: "Approximation of the Distribution-by the Monte Carlo methods"
+author: "Zhangyan"
+date: "2020/3/27"
+output:
+  html_document:
+    df_print: paged
+---
+
+# 1 Abstract
+
+This report calculate approximation of the distribution fuction of $N(0,1)$by the Monte Carlo methods.Then compared the approximate values produced by the Monte Carlo method with the real values.Further, repeated the experiment 100 times. Draw box plots of the 100 approximation errors at each $t$ for each $n$.
+
+---
+# 2 Task
+
+Consider approximation of the distribution function of
+$N(0, 1)$,
+\begin{equation}
+\Phi(t) = \int_{-\infty}^t \frac{1}{\sqrt{2\pi}} e^{-y^2 / 2} {\rm d}y,
+(\#eq:cdf)
+\end{equation}
+by the Monte Carlo methods:
+\begin{equation}
+\hat\Phi(t) = \frac{1}{n} \sum_{i=1}^n I(X_i \le t),
+\end{equation}
+where $X_i$'s are a random sample from $N(0, 1)$, and $I(\cdot)$ is
+the indicator function. Experiment with the approximation at
+$n \in \{10^2, 10^3, 10^4\}$ at
+$t \in \{0.0, 0.67, 0.84, 1.28, 1.65, 2.32, 2.58, 3.09, 3.72\}$ to form a table.
+
+# 3 Results
+## 3.1 The approximation is compared with the true value
+```{r}
+#计算真值
+t=c(0,0.67,0.84,1.28,1.65,2.32,2.58,3.09,3.72)
+(true=pnorm(t))
+#n=100次时
+n11=100
+x1=c(0,0,0,0,0,0,0,0,0)
+y1=c(rnorm(n11,mean=0,sd=1))
+for(i in 1:9){
+  a=0
+  for(j in 1:n11){
+    if(y1[j]<=t[i]){a=a+1}
+  }
+  x1[i]=a/n11
+}
+
+#n=1000时
+n12=1000
+x2=c(0,0,0,0,0,0,0,0,0)
+y2=c(rnorm(n12,mean=0,sd=1))
+for(i in 1:9){
+  b=0
+  for(j in 1:n12){
+    if(y2[j]<=t[i]){b=b+1}
+  }
+  x2[i]=b/n12
+}
+
+#n=10000时
+n13=10000
+x3=c(0,0,0,0,0,0,0,0,0)
+y3=c(rnorm(n13,mean=0,sd=1))
+for(i in 1:9){
+  c=0
+  for(j in 1:n13){
+    if(y3[j]<=t[i]){c=c+1}
+  }
+  x3[i]=c/n13
+}
+(table=data.frame(t,true,x1,x2,x3))
+```
+## 3.2 Repeat the experiment 100 times and draw box plots
+
+when n=10^2,the box plots of the 100 approximation errors at each t.
+```{r}
+#n=100时,重复100次
+n21=100
+x=matrix(0,100,9)
+for (p in 1:100) {
+  y=c(rnorm(n21,mean=0,sd=1))
+  for(i in 1:9){
+    a=0
+    for(j in 1:n21){
+      if(y[j]<=t[i]){a=a+1}
+    }
+    x[p,i]=a/n21
+  }
+}
+w=c(rep(true[1],100),rep(true[2],100),rep(true[3],100),rep(true[4],100),rep(true[5],100),rep(true[6],100),rep(true[7],100),rep(true[8],100),rep(true[9],100))
+m=matrix(w,nrow = 100,ncol = 9,byrow = FALSE)
+e=x-m
+#为了画图,处理数据形式
+E=as.vector(e)
+T=c(rep(t[1],100),rep(t[2],100),rep(t[3],100),rep(t[4],100),rep(t[5],100),rep(t[6],100),rep(t[7],100),rep(t[8],100),rep(t[9],100))
+df=cbind(E,T)
+df=data.frame(df)#矩阵变为数据框,画图要求
+#画图
+library(ggplot2)
+ggplot(df,aes(T,E,group=T))+geom_boxplot()
+```
+
+when n=10^3,the box plots of the 100 approximation errors at each t.
+```{r}
+n22=1000
+x=matrix(0,100,9)
+for (p in 1:100) {
+  y=c(rnorm(n22,mean=0,sd=1))
+  for(i in 1:9){
+    a=0
+    for(j in 1:n22){
+      if(y[j]<=t[i]){a=a+1}
+    }
+    x[p,i]=a/n22
+  }
+}
+w=c(rep(true[1],100),rep(true[2],100),rep(true[3],100),rep(true[4],100),rep(true[5],100),rep(true[6],100),rep(true[7],100),rep(true[8],100),rep(true[9],100))
+m=matrix(w,nrow = 100,ncol = 9,byrow = FALSE)
+e=x-m
+#为了画图,处理数据形式
+E=as.vector(e)
+T=c(rep(t[1],100),rep(t[2],100),rep(t[3],100),rep(t[4],100),rep(t[5],100),rep(t[6],100),rep(t[7],100),rep(t[8],100),rep(t[9],100))
+df=cbind(E,T)
+df=data.frame(df)#矩阵变为数据框,画图要求
+#画图
+library(ggplot2)
+ggplot(df,aes(T,E,group=T))+geom_boxplot()
+```
+
+when n=10^4,the box plots of the 100 approximation errors at each t.
+```{r}
+#n=10000时,重复100次
+n23=10000
+x=matrix(0,100,9)
+for (p in 1:100) {
+  y=c(rnorm(n23,mean=0,sd=1))
+  for(i in 1:9){
+    a=0
+    for(j in 1:n23){
+      if(y[j]<=t[i]){a=a+1}
+    }
+    x[p,i]=a/n23
+  }
+}
+w=c(rep(true[1],100),rep(true[2],100),rep(true[3],100),rep(true[4],100),rep(true[5],100),rep(true[6],100),rep(true[7],100),rep(true[8],100),rep(true[9],100))
+m=matrix(w,nrow = 100,ncol = 9,byrow = FALSE)
+e=x-m
+#为了画图,处理数据形式
+E=as.vector(e)
+T=c(rep(t[1],100),rep(t[2],100),rep(t[3],100),rep(t[4],100),rep(t[5],100),rep(t[6],100),rep(t[7],100),rep(t[8],100),rep(t[9],100))
+df=cbind(E,T)
+df=data.frame(df)#矩阵变为数据框,画图要求
+#画图
+library(ggplot2)
+ggplot(df,aes(T,E,group=T))+geom_boxplot()
+```
+
